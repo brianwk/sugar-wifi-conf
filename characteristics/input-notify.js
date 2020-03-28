@@ -173,7 +173,7 @@ async function setWifi (input_ssid, input_password) {
   let result = restartWpaSupplicant()
   if (result.error) {
     fs.renameSync(conf_path + suffix, conf_path)
-    let result = restartWpaSupplicant()
+    result = restartWpaSupplicant()
   }
 
   setMessage(result.msg)

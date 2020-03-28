@@ -185,12 +185,12 @@ async function setWifi (input_ssid, input_password) {
     // try every 2 second
     await sleep(2)
     try{
-      let msg = execSync('wpa_supplicant -B -iwlan0 -c/etc/wpa_supplicant/wpa_supplicant.conf')
+      let msg = execSync('systemctl restart wpa_supplicant')
       resMsg = msg.toString()
       break
     } catch (e) {
       console.log(e)
-      resMsg = 'Commond failed.'
+      resMsg = 'Commond failed: ' + e.toString()
     }
     maxTryTimes--
   }

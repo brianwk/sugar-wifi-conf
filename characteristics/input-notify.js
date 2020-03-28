@@ -4,13 +4,14 @@ let bleno = require('bleno')
 let UUID = require('../sugar-uuid')
 let config = require('../config')
 const fs = require('fs')
+const path = require('path')
 const conf_path = '/etc/wpa_supplicant/wpa_supplicant.conf'
 const iface_path = '/etc/network/interfaces'
 const concatTag = '%&%'
 const endTag = '&#&'
 
 const pug = require('pug')
-const configTemplate = pug.compileFile('../conf/wpa_supplicant.conf.pug')
+const configTemplate = pug.compileFile(path.resolve(__dirname, '../conf/wpa_supplicant.conf.pug'))
 
 let argv = process.argv
 if (argv.length > 2) config.key = process.argv[2]

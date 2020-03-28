@@ -9,6 +9,9 @@ const iface_path = '/etc/network/interfaces'
 const concatTag = '%&%'
 const endTag = '&#&'
 
+const pug = require('pug')
+const configTemplate = pug.compileFile('../conf/wpa_supplicant.conf.pug')
+
 let argv = process.argv
 if (argv.length > 2) config.key = process.argv[2]
 
@@ -144,60 +147,51 @@ NotifyMassageCharacteristic.prototype.onNotify = function() {
 }
 
 async function setWifi (input_ssid, input_password) {
-  let data = fs.readFileSync(conf_path, 'utf8')
-  let wifiRegx = /(network={[^\}]+})/g
-  let ssidRegx = /ssid="([^"]*)"/
-  let priorityRegx = /priority=([\d]*)/
-  let wifiMatch = data.match(wifiRegx)
-  let wifiArray = []
-  let maxPriority = 0
-  if (wifiMatch) {
-    for (let i in wifiMatch) {
-      let str = wifiMatch[i]
-      let ssid = str.match(ssidRegx)
-      ssid = ssid ? ssid[1] : ''
-      let priority = str.match(priorityRegx)
-      priority = priority ? priority[1] : 0
-      maxPriority = Math.max(maxPriority, priority)
-      if (input_ssid !== ssid) {
-        wifiArray.push(str)
-      }
-      data = data.replace(wifiMatch[i], '')
-    }
-  }
-  let prefix = data.replace('Country=', 'country=')
-  wifiArray.push(`network={\n\t\tssid="${input_ssid}"\n\t\tscan_ssid=1\n\t\tpsk="${input_password}"\n\t\tpriority=${maxPriority+1}\n\t}`)
-  let content = `${prefix}\n\t${wifiArray.join('\n\t')}`
-  fs.writeFileSync(conf_path, content)
+  /**
+   * Use a pug template to configure wpa_supplicant.conf
+   * Save the previous config as wpa_supplicant.conf.previous
+   */
+  let config = configTemplate({
+    ssid: input_ssid,
+    psk: input_password,
+    country: 'US' /** @todo hardcoded */
+  })
+  const suffix = '.previous'
+  fs.renameSync(conf_path, conf_path + suffix)
+  fs.writeFileSync(conf_path, config)
+
+  /** @todo start block to refactor to use dbus */
   // check if wlan0 available, otherwise let reboot
   if (!isWlan0Ok()) {
+    /** @todo if there is an error, should we automatically reboot here? */
     setMessage('OK. Please reboot.')
     return
   }
-  try{
-    execSync('killall wpa_supplicant')
+  /** @todo this logic needs to verify connectivity
+   */
+  let result = restartWpaSupplicant()
+  if (result.error) {
+    fs.renameSync(conf_path + suffix, conf_path)
+    let result = restartWpaSupplicant()
+  }
+
+  setMessage(result.msg)
+  /** @todo end block to refactor to use dbus */
+}
+
+function restartWpaSupplicant() {
+  let error = false
+  try {
+    let msg = execSync('systemctl restart wpa_supplicant')
   } catch (e) {
-    console.log(e.toString())
+    error = true
+    msg = 'Error: ' + e.toString()
   }
-  let resMsg = ''
-  let maxTryTimes = 10
-  while (maxTryTimes > 0) {
-    // try every 2 second
-    await sleep(2)
-    try{
-      let msg = execSync('systemctl restart wpa_supplicant')
-      resMsg = msg.toString()
-      break
-    } catch (e) {
-      console.log(e)
-      resMsg = 'Commond failed: ' + e.toString()
-    }
-    maxTryTimes--
-  }
-  setMessage(maxTryTimes.toString() + ' ' + resMsg)
+  return { error, msg }
 }
 
 function isWlan0Ok() {
+  /** @todo refactor this function to use dbus */
   let data = fs.readFileSync(iface_path, 'utf8')
   let rawContent = data.split('\n')
   let foundWlan0 = false

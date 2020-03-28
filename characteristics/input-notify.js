@@ -182,8 +182,9 @@ async function setWifi (input_ssid, input_password) {
 
 function restartWpaSupplicant() {
   let error = false
+  let msg
   try {
-    let msg = execSync('systemctl restart wpa_supplicant')
+    msg = execSync('systemctl restart wpa_supplicant')
   } catch (e) {
     error = true
     msg = 'Error: ' + e.toString()

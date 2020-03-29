@@ -186,7 +186,7 @@ function restartWpaSupplicant() {
   let error = false
   let msg
   try {
-    msg = execSync('systemctl restart wpa_supplicant').toString()
+    msg = execSync('/bin/systemctl restart wpa_supplicant').toString()
   } catch (e) {
     error = true
     msg = 'Error: ' + e.toString()

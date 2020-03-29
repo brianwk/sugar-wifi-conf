@@ -170,10 +170,12 @@ async function setWifi (input_ssid, input_password) {
   }
   /** @todo this logic needs to verify connectivity
    */
-  let result = restartWpaSupplicant()
+  var result = restartWpaSupplicant()
+  console.log('1', result)
   if (result.error) {
     fs.renameSync(conf_path + suffix, conf_path)
     result = restartWpaSupplicant()
+    console.log('2', result)
   }
 
   setMessage(result.msg)
@@ -184,7 +186,7 @@ function restartWpaSupplicant() {
   let error = false
   let msg
   try {
-    msg = execSync('systemctl restart wpa_supplicant')
+    msg = execSync('systemctl restart wpa_supplicant').toString()
   } catch (e) {
     error = true
     msg = 'Error: ' + e.toString()

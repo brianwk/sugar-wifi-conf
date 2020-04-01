@@ -1,4 +1,4 @@
 module.exports = {
-  name: 'raspberrypi',
-  key: 'pisugar'
+  name: 'OtariMat',
+  key: 'otari'
 }

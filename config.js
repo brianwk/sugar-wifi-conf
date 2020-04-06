@@ -1,4 +1,4 @@
 module.exports = {
-  name: 'OtariMat',
+  name: 'otari',
   key: 'otari'
 }

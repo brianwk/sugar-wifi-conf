@@ -12,7 +12,7 @@ let InputCharacteristicSep = require('./characteristics/input-notify').InputChar
 let NotifyMassageCharacteristic = require('./characteristics/input-notify').NotifyMassageCharacteristic
 let CustomCharacteristics = require('./characteristics/custom-info')
 let CustomCommandCharacteristics = require('./characteristics/custom-command')
-
+let WorkoutRoutineCharacteristic = require('./characteristics/workout-routine')
 let BlenoPrimaryService = bleno.PrimaryService
 
 // console.log('check bluetooth')
@@ -29,6 +29,7 @@ function wifiConfService() {
       new InputCharacteristic(),
       new InputCharacteristicSep(),
       new NotifyMassageCharacteristic(),
+      new WorkoutRoutineCharacteristic(),
       ...CustomCharacteristics,
       ...CustomCommandCharacteristics
     ]
@@ -36,7 +37,7 @@ function wifiConfService() {
 }
 
 
-function wait (sec) {
+function wait(sec) {
   return new Promise(function (resolve, reject) {
     setTimeout(function () {
       resolve(true)
@@ -44,7 +45,7 @@ function wait (sec) {
   })
 }
 
-async function startBLE () {
+async function startBLE() {
   console.log('Wait 10 seconds')
   await wait(10)
   // console.log('check bluetooth')
@@ -52,35 +53,35 @@ async function startBLE () {
   console.log('Bleno starting...')
   util.inherits(wifiConfService, BlenoPrimaryService)
 
-  bleno.on('stateChange', function(state) {
+  bleno.on('stateChange', function (state) {
     console.log('on -> stateChange: ' + state + ', address = ' + bleno.address)
     if (state === 'poweredOn') {
-      bleno.startAdvertising(config.name, [ UUID.SERVICE_ID ])
+      bleno.startAdvertising(config.name, [UUID.SERVICE_ID])
     } else {
       bleno.stopAdvertising()
     }
   })
 
-// Linux only events /////////////////
-  bleno.on('accept', function(clientAddress) {
+  // Linux only events /////////////////
+  bleno.on('accept', function (clientAddress) {
     console.log('on -> accept, client: ' + clientAddress)
     bleno.updateRssi()
   })
 
-  bleno.on('disconnect', function(clientAddress) {
+  bleno.on('disconnect', function (clientAddress) {
     console.log('on -> disconnect, client: ' + clientAddress)
   })
 
-  bleno.on('rssiUpdate', function(rssi) {
+  bleno.on('rssiUpdate', function (rssi) {
     console.log('on -> rssiUpdate: ' + rssi)
   })
-//////////////////////////////////////
+  //////////////////////////////////////
 
-  bleno.on('mtuChange', function(mtu) {
+  bleno.on('mtuChange', function (mtu) {
     console.log('on -> mtuChange: ' + mtu)
   })
 
-  bleno.on('advertisingStart', function(error) {
+  bleno.on('advertisingStart', function (error) {
     console.log('on -> advertisingStart: ' + (error ? 'error ' + error : 'success'))
     if (!error) {
       bleno.setServices([
@@ -89,11 +90,11 @@ async function startBLE () {
     }
   })
 
-  bleno.on('advertisingStop', function() {
+  bleno.on('advertisingStop', function () {
     console.log('on -> advertisingStop')
   })
 
-  bleno.on('servicesSet', function(error) {
+  bleno.on('servicesSet', function (error) {
     console.log('on -> servicesSet: ' + (error ? 'error ' + error : 'success'))
   })
 }

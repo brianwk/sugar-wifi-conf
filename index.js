@@ -29,7 +29,7 @@ function wifiConfService() {
       new InputCharacteristic(),
       new InputCharacteristicSep(),
       new NotifyMassageCharacteristic(),
-      new WorkoutRoutineCharacteristic(),
+//      new WorkoutRoutineCharacteristic(),
       ...CustomCharacteristics,
       ...CustomCommandCharacteristics
     ]

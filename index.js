@@ -12,7 +12,7 @@ let InputCharacteristicSep = require('./characteristics/input-notify').InputChar
 let NotifyMassageCharacteristic = require('./characteristics/input-notify').NotifyMassageCharacteristic
 let CustomCharacteristics = require('./characteristics/custom-info')
 let CustomCommandCharacteristics = require('./characteristics/custom-command')
-let WorkoutRoutineCharacteristic = require('./characteristics/workout-routine')
+// let WorkoutRoutineCharacteristic = require('./characteristics/workout-routine')
 let BlenoPrimaryService = bleno.PrimaryService
 
 // console.log('check bluetooth')

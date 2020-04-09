@@ -18,7 +18,7 @@ let WifiNetworksCharacteristic = function () {
     wlan0.on('ready', function () {
         console.log('scanning networks')
         wlan0.scan()
-        this.interval = setInterval(wlan0.scan.bind(wlan0), 5000)
+	// this.interval = setInterval(wlan0.scan.bind(wlan0), 5000)
     }.bind(this))
 
     wlan0.on('update', function () {
@@ -32,10 +32,10 @@ util.inherits(WifiNetworksCharacteristic, BlenoCharacteristic)
 
 WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback) {
     const size = bleno.mtu - 1;
-    console.log('read networks', offset, size, this.buffer)
+    console.log('read networks', offset, size, this.buffer ? this.buffer.byteLength : null)
 
     if (offset > 0) {
-        callback(this.RESULT_SUCCESS, this.buffer.slice(offset, offset + size))
+        callback(this.RESULT_SUCCESS, this.buffer.slice(offset))
         return
     }
 

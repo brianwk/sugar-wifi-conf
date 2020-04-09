@@ -32,6 +32,12 @@ util.inherits(WifiNetworksCharacteristic, BlenoCharacteristic)
 
 WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback) {
     console.log('read networks request', offset)
+
+    if (offset > 0) {
+        callback(this.RESULT_SUCCESS, Buffer.from(this.buffer, offset, this.mtu))
+        return
+    }
+
     this.networks
         .pipe(
             distinct(({ ssid }) => ssid),
@@ -42,8 +48,8 @@ WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback)
         .subscribe(
             (networks) => {
                 const encoded = JSON.stringify(networks)
-                console.log(encoded)
-                callback(this.RESULT_SUCCESS, Buffer.from(encoded, 'ascii'))
+                this.buffer = Buffer.from(encoded, 'ascii')
+                callback(this.RESULT_SUCCESS, Buffer.from(this.buffer, offset, this.mtu))
             }
         )
 }

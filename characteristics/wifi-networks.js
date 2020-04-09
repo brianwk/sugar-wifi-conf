@@ -26,9 +26,10 @@ WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback)
 
     this.interface.on('update', function () {
         // var cur = wifi.currentNetwork
-        callback(this.RESULT_SUCCESS, JSON.stringify(this.interface.networks))
-        this.interface.off('ready')
-        this.interface.off('update')
+        const networks = this.interface.networks.map(({ ssid, signal, frequency }) => {
+            return { ssid, signal, frequency }
+        })
+        callback(this.RESULT_SUCCESS, JSON.stringify(networks))
     }.bind(this))
 
     // @todo example JSON data which represents workout IDs

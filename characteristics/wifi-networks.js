@@ -34,6 +34,7 @@ WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback)
     callback(
         this.RESULT_SUCCESS,
         this.networks
+            .subscribe()
             .distinct(({ ssid }) => ssid)
             .map(
                 ({ ssid, frequency, signal }) => (

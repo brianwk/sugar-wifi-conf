@@ -31,12 +31,11 @@ let WifiNetworksCharacteristic = function () {
 util.inherits(WifiNetworksCharacteristic, BlenoCharacteristic)
 
 WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback) {
-    console.log('read networks request', offset)
-
     const size = bleno.mtu - 1;
+    console.log('read networks', offset, size, this.buffer)
 
     if (offset > 0) {
-        callback(this.RESULT_SUCCESS, Buffer.from(this.buffer, offset, size))
+        callback(this.RESULT_SUCCESS, this.buffer.slice(offset, size))
         return
     }
 
@@ -50,8 +49,8 @@ WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback)
         )
         .subscribe((networks) => {
             const encoded = JSON.stringify(networks)
-            this.buffer = encoded
-            callback(this.RESULT_SUCCESS, Buffer.from(this.buffer, offset, size))
+            this.buffer = Buffer.from(encoded, 'ascii')
+            callback(this.RESULT_SUCCESS, this.buffer.slice(offset, size))
         })
 }
 

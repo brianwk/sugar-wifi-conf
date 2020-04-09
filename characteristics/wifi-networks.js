@@ -29,7 +29,7 @@ WifiNetworksCharacteristic.prototype.onSubscribe = function (maxValueSize, updat
     const next = (network) => {
         const encoded = JSON.stringify(network)
         buffer = Buffer.from(encoded, 'ascii')
-        updateValueCallback(n)
+        updateValueCallback(buffer)
     }
 
     this.subscription = wlan0.on(

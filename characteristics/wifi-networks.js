@@ -14,22 +14,18 @@ let WifiNetworksCharacteristic = function () {
         properties: ['notify']
     })
     this.networks = new ReplaySubject()
-
-    wlan0.on('ready', function () {
-        console.log('scanning networks')
-        wlan0.scan()
-    }.bind(this))
-
-    console.log(wlan0.eventNames())
 }
 
 util.inherits(WifiNetworksCharacteristic, BlenoCharacteristic)
 
 WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
+    console.log('calling onNetworkUpdate')
+
+    const { updateValueCallback } = this
     const next = (network) => {
         const encoded = JSON.stringify(network)
         buffer = Buffer.from(encoded, 'ascii')
-        this.updateValueCallback(buffer)
+        updateValueCallback(buffer)
     }
 
     of(wlan0.networks)
@@ -43,8 +39,12 @@ WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
 }
 
 WifiNetworksCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {
+    console.log('subscribe to WifiNetworksCharacteristic')
+
+    wlan0.on('ready', wlan0.scan)
+
     this.updateValueCallback = updateValueCallback
-    this.subscription = wlan0.on(
+    wlan0.on(
         'update',
         this.onNetworkUpdate
     )
@@ -55,6 +55,7 @@ WifiNetworksCharacteristic.prototype.onNotify = function () {
 }
 
 WifiNetworksCharacteristic.prototype.onUnsubscribe = function () {
+    wlan0.removeListener(wlan0.scan)
     wlan0.removeListener(this.onNetworkUpdate)
 }
 

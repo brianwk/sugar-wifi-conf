@@ -18,7 +18,7 @@ let WifiNetworksCharacteristic = function () {
     wlan0.on('ready', function () {
         console.log('scanning networks')
         wlan0.scan()
-	// this.interval = setInterval(wlan0.scan.bind(wlan0), 5000)
+        // this.interval = setInterval(wlan0.scan.bind(wlan0), 5000)
     }.bind(this))
 
     wlan0.on('update', function () {
@@ -26,6 +26,8 @@ let WifiNetworksCharacteristic = function () {
             this.networks.next(n)
         })
     }.bind(this))
+
+    console.log(wlan0.eventNames())
 }
 
 util.inherits(WifiNetworksCharacteristic, BlenoCharacteristic)

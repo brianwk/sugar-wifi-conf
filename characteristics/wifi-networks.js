@@ -29,7 +29,7 @@ WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
     const next = (network) => {
         const encoded = JSON.stringify(network)
         buffer = Buffer.from(encoded, 'ascii')
-        updateValueCallback(buffer)
+        this.updateValueCallback(buffer)
     }
 
     of(wlan0.networks)
@@ -43,6 +43,7 @@ WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
 }
 
 WifiNetworksCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {
+    this.updateValueCallback = updateValueCallback
     this.subscription = wlan0.on(
         'update',
         this.onNetworkUpdate

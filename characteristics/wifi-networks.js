@@ -10,21 +10,21 @@ let WifiNetworksCharacteristic = function () {
         uuid: UUID.WIFI_NETWORKS,
         properties: ['read']
     })
+
 }
 
 util.inherits(WifiNetworksCharacteristic, BlenoCharacteristic)
 
 WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback) {
+    console.log('read networks request')
     this.interface = wpa('wlan0')
     this.interface.on('ready', function () {
-        try {
-            this.interface.scan()
-        } catch (e) {
-            console.log('interface scan error', e)
-        }
+        console.log('scanning networks')
+        this.interface.scan()
     }.bind(this))
 
     this.interface.on('update', function () {
+        console.log('update state from dbus')
         // var cur = wifi.currentNetwork
         const networks = this.interface.networks.map((n) => {
             let ssid = n.ssid,

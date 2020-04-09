@@ -25,7 +25,7 @@ WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback)
     wlan0.on('update', function () {
         console.log('update state from dbus')
         // var cur = wifi.currentNetwork
-        const networks = this.interface.networks.map(({ ssid, signal, frequency }) => {
+        const networks = wlan0.networks.map(({ ssid, signal, frequency }) => {
             return { ssid, signal, frequency }
         })
         callback(this.RESULT_SUCCESS, JSON.stringify(networks))

@@ -14,7 +14,7 @@ let CustomCharacteristics = require('./characteristics/custom-info')
 let CustomCommandCharacteristics = require('./characteristics/custom-command')
 // let WorkoutRoutineCharacteristic = require('./characteristics/workout-routine')
 let BlenoPrimaryService = bleno.PrimaryService
-
+let WifiNetworksCharacteristic = require('./characteristics/wifi-networks')
 // console.log('check bluetooth')
 // console.log(execSync('dmesg |grep -i Bluetooth').toString())
 
@@ -29,7 +29,8 @@ function wifiConfService() {
       new InputCharacteristic(),
       new InputCharacteristicSep(),
       new NotifyMassageCharacteristic(),
-//      new WorkoutRoutineCharacteristic(),
+      // new WorkoutRoutineCharacteristic(),
+      new WifiNetworksCharacteristic(),
       ...CustomCharacteristics,
       ...CustomCommandCharacteristics
     ]

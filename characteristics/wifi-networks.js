@@ -26,6 +26,7 @@ WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback)
 
     this.interface.on('update', function () {
         // var cur = wifi.currentNetwork
+        console.log(this.interface.networks)
         const networks = this.interface.networks.map(({ ssid, signal, frequency }) => {
             return { ssid, signal, frequency }
         })

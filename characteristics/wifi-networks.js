@@ -4,7 +4,7 @@ let UUID = require('../sugar-uuid')
 let wpa = require('wpa_supplicant')
 const wlan0 = wpa('wlan0')
 const { ReplaySubject } = require('rxjs')
-const { distinct, map, toArray, takeUntil, first } = require('rxjs/operators')
+const { distinct, map, toArray, delay, first } = require('rxjs/operators')
 
 let BlenoCharacteristic = bleno.Characteristic
 

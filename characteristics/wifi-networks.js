@@ -17,12 +17,16 @@ util.inherits(WifiNetworksCharacteristic, BlenoCharacteristic)
 WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback) {
     this.interface = wpa('wlan0')
     this.interface.on('ready', function () {
-        this.interface.scan()
+        try {
+            this.interface.scan()
+        } catch (e) {
+            console.log('interface scan error', e)
+        }
     }.bind(this))
 
     this.interface.on('update', function () {
         // var cur = wifi.currentNetwork
-        callback(this.RESULT_SUCCESS, JSON.stringify(wifi.networks))
+        callback(this.RESULT_SUCCESS, JSON.stringify(this.interface.networks))
         this.interface.off('ready')
         this.interface.off('update')
     }.bind(this))

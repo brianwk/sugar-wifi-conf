@@ -25,6 +25,10 @@ let WifiNetworksCharacteristic = function () {
 
 util.inherits(WifiNetworksCharacteristic, BlenoCharacteristic)
 
+WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
+
+}
+
 WifiNetworksCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {
     const next = (network) => {
         const encoded = JSON.stringify(network)
@@ -52,7 +56,7 @@ WifiNetworksCharacteristic.prototype.onNotify = function () {
 }
 
 WifiNetworksCharacteristic.prototype.onUnsubscribe = function () {
-    wlan0.removeEventListener('update')
+    wlan0.removeListener('update')
 }
 
 module.exports = WifiNetworksCharacteristic

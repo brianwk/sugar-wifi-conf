@@ -40,7 +40,7 @@ WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback)
             toArray()
         )
         .subscribe(
-            (networks) => callback(this.RESULT_SUCCESS, JSON.stringify(networks))
+            (networks) => callback(this.RESULT_SUCCESS, new Buffer(JSON.stringify(networks)))
         )
 }
 

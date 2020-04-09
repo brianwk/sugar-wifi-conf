@@ -31,7 +31,7 @@ let WifiNetworksCharacteristic = function () {
 util.inherits(WifiNetworksCharacteristic, BlenoCharacteristic)
 
 WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback) {
-    console.log('read networks request')
+    console.log('read networks request', offset)
     this.networks
         .pipe(
             distinct(({ ssid }) => ssid),

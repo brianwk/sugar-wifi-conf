@@ -31,7 +31,8 @@
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "bleno": "^0.5.0",
-    "pug": "^2.0.4"
+    "pug": "^2.0.4",
+    "wpa_supplicant": "^1.0.2"
   },
   "devDependencies": {
     "babel-plugin-transform-runtime": "^6.23.0",

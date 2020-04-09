@@ -341,6 +341,7 @@ bl@^4.0.1:
 bleno@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/bleno/-/bleno-0.5.0.tgz#80b64ce32ad902126790166611838233d8292396"
+  integrity sha1-gLZM4yrZAhJnkBZmEYOCM9gpI5Y=
   dependencies:
     debug "^2.2.0"
   optionalDependencies:
@@ -437,6 +438,13 @@ core-js@^2.4.0:
 core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
+
+dbus@^1.0.0:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/dbus/-/dbus-1.0.7.tgz#8ec719b0943f1e77deab2d13ce74a6e5e9839e83"
+  integrity sha512-qba6/ajLoqzCy3Kl3aFgLXLP4TTf0qfgNjib1qoCJG/8HbSs0lDvxkz4nJU63CURZVzxvpK/VpQpT40KA8Kr3A==
+  dependencies:
+    nan "^2.14.0"
 
 debug@^2.2.0, debug@^2.6.8:
   version "2.6.9"
@@ -659,7 +667,7 @@ nan@2.13.2:
   version "2.13.2"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.13.2.tgz#f51dc7ae66ba7d5d55e1e6d4d8092e802c9aefe7"
 
-nan@^2.0.5:
+nan@^2.0.5, nan@^2.14.0:
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
 
@@ -989,6 +997,11 @@ tar-stream@^2.0.0:
     inherits "^2.0.3"
     readable-stream "^3.1.1"
 
+thunky@^1.0.2:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/thunky/-/thunky-1.1.0.tgz#5abaf714a9405db0504732bbccd2cedd9ef9537d"
+  integrity sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA==
+
 to-fast-properties@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/to-fast-properties/-/to-fast-properties-1.0.3.tgz#b83571fa4d8c25b82e231b06e3a3055de4ca1a47"
@@ -1056,6 +1069,14 @@ with@^5.0.0:
 wordwrap@0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-0.0.2.tgz#b79669bb42ecb409f83d583cad52ca17eaa1643f"
+
+wpa_supplicant@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/wpa_supplicant/-/wpa_supplicant-1.0.2.tgz#e7d0f85598c6992af2bae2c8ae7e19b991d5843c"
+  integrity sha512-XXGibNsrpBdOrSR8uW1oJ9Tcikg285Zgyk54ddBg2kLZF6es/VnjAhAj3eIE0MwSwB+b95xKl+5HhLhqEBAxOQ==
+  dependencies:
+    dbus "^1.0.0"
+    thunky "^1.0.2"
 
 wrappy@1:
   version "1.0.2"

@@ -29,30 +29,6 @@
     {
       "label": "reboot",
       "command": "reboot"
-    },
-    {
-      "label": "play",
-      "command": "curl http://localhost/play"
-    },
-    {
-      "label": "pause",
-      "command": "curl http://localhost/pause"
-    },
-    {
-      "label": "rewind",
-      "command": "curl http://localhost/rewind"
-    },
-    {
-      "label": "refresh",
-      "command": "curl http://localhost/refresh"
-    },
-    {
-      "label": "mute",
-      "command": "curl http://localhost/mute"
-    },
-    {
-      "label": "unmute",
-      "command": "curl http://localhost/unmute"
     }
   ]
 }

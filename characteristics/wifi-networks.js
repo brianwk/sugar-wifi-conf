@@ -3,7 +3,7 @@ let bleno = require('bleno')
 let UUID = require('../sugar-uuid')
 let wpa = require('wpa_supplicant')
 const wlan0 = wpa('wlan0')
-const { scheduled, timer, ReplaySubject } = require('rxjs')
+const { Observable, timer, ReplaySubject } = require('rxjs')
 const { delay, distinct, map, toArray, first, takeUntil } = require('rxjs/operators')
 
 let BlenoCharacteristic = bleno.Characteristic
@@ -13,31 +13,31 @@ let WifiNetworksCharacteristic = function () {
         uuid: UUID.WIFI_NETWORKS,
         properties: ['notify']
     })
-    this.networks = new ReplaySubject()
 }
 
 util.inherits(WifiNetworksCharacteristic, BlenoCharacteristic)
 
 WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
-    console.log('calling onNetworkUpdate')
-
-    const { updateValueCallback } = this
-    const next = (network) => {
+    const next = function (network) {
         console.log('next network', network)   
         const encoded = JSON.stringify(network)
         const buffer = Buffer.from(encoded, 'ascii')
-        updateValueCallback(buffer)
-    }
+        this.updateValueCallback(buffer)
+    }.bind(this)
 
-    scheduled(wlan0.networks)
+    const networks = Observable.create((observer) => {
+        //setTimeout(() => {
+	    wlan0.networks.forEach((network) => observer.next(network))
+            observer.complete()
+	// }, 5000)
+    })
+
+    networks
         .pipe(
-            delay(5000),
             distinct(({ ssid }) => ssid),
             map(({ ssid, signal }) => {
-                console.log('got network', { ssid, signal })
                 return { ssid, signal }
-            }),
-            takeUntil(timer(10000))
+            })
         )
         .subscribe({ next })
 }
@@ -45,12 +45,14 @@ WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
 WifiNetworksCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {
     console.log('subscribe to WifiNetworksCharacteristic')
 
-    wlan0.on('ready', wlan0.scan)
+    wlan0.on('ready', () => wlan0.scan())
 
     this.updateValueCallback = updateValueCallback
     wlan0.on(
         'update',
-        this.onNetworkUpdate.bind(this)
+	function () {
+            this.onNetworkUpdate()
+        }.bind(this)
     )
 }
 

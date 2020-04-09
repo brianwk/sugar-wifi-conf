@@ -35,7 +35,7 @@ WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback)
     console.log('read networks', offset, size, this.buffer)
 
     if (offset > 0) {
-        callback(this.RESULT_SUCCESS, this.buffer.slice(offset, size))
+        callback(this.RESULT_SUCCESS, this.buffer.slice(offset, offset + size))
         return
     }
 

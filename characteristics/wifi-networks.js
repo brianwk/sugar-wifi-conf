@@ -3,7 +3,7 @@ let bleno = require('bleno')
 let UUID = require('../sugar-uuid')
 let wpa = require('wpa_supplicant')
 const wlan0 = wpa('wlan0')
-const { of, timer, ReplaySubject } = require('rxjs')
+const { scheduled, timer, ReplaySubject } = require('rxjs')
 const { delay, distinct, map, toArray, first, takeUntil } = require('rxjs/operators')
 
 let BlenoCharacteristic = bleno.Characteristic
@@ -28,7 +28,7 @@ WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
         updateValueCallback(buffer)
     }
 
-    of(wlan0.networks)
+    scheduled(wlan0.networks)
         .pipe(
             delay(5000),
             distinct(({ ssid }) => ssid),

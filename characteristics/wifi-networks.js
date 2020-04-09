@@ -50,7 +50,7 @@ WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback)
         .subscribe(
             (networks) => {
                 const encoded = JSON.stringify(networks)
-                this.buffer = Buffer.from(encoded, 'ascii')
+                this.buffer = encoded
                 callback(this.RESULT_SUCCESS, Buffer.from(this.buffer, offset, size))
             }
         )

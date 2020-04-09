@@ -26,28 +26,26 @@ let WifiNetworksCharacteristic = function () {
 util.inherits(WifiNetworksCharacteristic, BlenoCharacteristic)
 
 WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
-
-}
-
-WifiNetworksCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {
     const next = (network) => {
         const encoded = JSON.stringify(network)
         buffer = Buffer.from(encoded, 'ascii')
         updateValueCallback(buffer)
     }
 
+    of(wlan0.networks)
+        .pipe(
+            delay(5000),
+            distinct(({ ssid }) => ssid),
+            map(({ ssid, signal }) => ({ ssid, signal })),
+            takeUntil(timer(10000))
+        )
+        .subscribe({ next })
+}
+
+WifiNetworksCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {
     this.subscription = wlan0.on(
         'update',
-        function () {
-            of(wlan0.networks)
-                .pipe(
-                    delay(5000),
-                    distinct(({ ssid }) => ssid),
-                    map(({ ssid, signal }) => ({ ssid, signal })),
-                    takeUntil(timer(10000)),
-                )
-                .subscribe({ next })
-        }.bind(this)
+        this.onNetworkUpdate
     )
 }
 
@@ -56,7 +54,7 @@ WifiNetworksCharacteristic.prototype.onNotify = function () {
 }
 
 WifiNetworksCharacteristic.prototype.onUnsubscribe = function () {
-    wlan0.removeListener('update')
+    wlan0.removeListener(this.onNetworkUpdate)
 }
 
 module.exports = WifiNetworksCharacteristic

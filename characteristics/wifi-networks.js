@@ -29,7 +29,7 @@ WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback)
             return { ssid, signal, frequency }
         })
         callback(this.RESULT_SUCCESS, JSON.stringify(networks))
-    })
+    }.bind(this))
 }
 
 module.exports = WifiNetworksCharacteristic

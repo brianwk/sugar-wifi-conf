@@ -3,7 +3,7 @@ let bleno = require('bleno')
 let UUID = require('../sugar-uuid')
 let wpa = require('wpa_supplicant')
 const wlan0 = wpa('wlan0')
-const { timer, ReplaySubject } = require('rxjs')
+const { of, timer, ReplaySubject } = require('rxjs')
 const { delay, distinct, map, toArray, first, takeUntil } = require('rxjs/operators')
 
 let BlenoCharacteristic = bleno.Characteristic
@@ -11,20 +11,13 @@ let BlenoCharacteristic = bleno.Characteristic
 let WifiNetworksCharacteristic = function () {
     WifiNetworksCharacteristic.super_.call(this, {
         uuid: UUID.WIFI_NETWORKS,
-        properties: ['read']
+        properties: ['notify']
     })
     this.networks = new ReplaySubject()
 
     wlan0.on('ready', function () {
         console.log('scanning networks')
         wlan0.scan()
-        // this.interval = setInterval(wlan0.scan.bind(wlan0), 5000)
-    }.bind(this))
-
-    wlan0.on('update', function () {
-        wlan0.networks.forEach((n) => {
-            this.networks.next(n)
-        })
     }.bind(this))
 
     console.log(wlan0.eventNames())
@@ -32,29 +25,34 @@ let WifiNetworksCharacteristic = function () {
 
 util.inherits(WifiNetworksCharacteristic, BlenoCharacteristic)
 
-WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback) {
-    const size = bleno.mtu - 1;
-    console.log('read networks', offset, size, this.buffer ? this.buffer.byteLength : null)
-
-    if (offset) {
-        callback(this.RESULT_ATTR_NOT_LONG, null)
-        return
+WifiNetworksCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {
+    const next = (network) => {
+        const encoded = JSON.stringify(network)
+        buffer = Buffer.from(encoded, 'ascii')
+        updateValueCallback(n)
     }
 
-    this.networks
-        .pipe(
-            delay(5000),
-            distinct(({ ssid }) => ssid),
-            map(({ ssid, frequency, signal }) => ({ ssid, signal, frequency })),
-            takeUntil(timer(10000)),
-            toArray(),
-            first()
-        )
-        .subscribe((networks) => {
-            const encoded = JSON.stringify(networks)
-            this.buffer = Buffer.from(encoded, 'ascii')
-            callback(this.RESULT_SUCCESS, this.buffer)
-        })
+    this.subscription = wlan0.on(
+        'update',
+        function () {
+            of(wlan0.networks)
+                .pipe(
+                    delay(5000),
+                    distinct(({ ssid }) => ssid),
+                    map(({ ssid, signal }) => ({ ssid, signal })),
+                    takeUntil(timer(10000)),
+                )
+                .subscribe({ next })
+        }.bind(this)
+    )
+}
+
+WifiNetworksCharacteristic.prototype.onNotify = function () {
+    wlan0.scan()
+}
+
+WifiNetworksCharacteristic.prototype.onUnsubscribe = function () {
+    wlan0.removeEventListener('update')
 }
 
 module.exports = WifiNetworksCharacteristic

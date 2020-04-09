@@ -43,7 +43,7 @@ WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback)
         .pipe(
             distinct(({ ssid }) => ssid),
             map(({ ssid, frequency, signal }) => ({ ssid, signal, frequency })),
-            takeUntil(timer(5000)),
+            takeUntil(timer(10000)),
             toArray(),
             first()
         )

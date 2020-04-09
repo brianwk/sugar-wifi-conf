@@ -25,7 +25,7 @@ WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
     const next = (network) => {
         console.log('next network', network)   
         const encoded = JSON.stringify(network)
-        buffer = Buffer.from(encoded, 'ascii')
+        const buffer = Buffer.from(encoded, 'ascii')
         updateValueCallback(buffer)
     }
 

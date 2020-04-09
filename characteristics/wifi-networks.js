@@ -34,10 +34,11 @@ WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback)
     console.log('read networks request')
     callback(
         this.RESULT_SUCCESS,
-        JSON.stringify(this.networks
-            .pipe(distinct(({ ssid }) => ssid))
-            .subscribe()
-            .map(({ ssid, frequency, signal }) => ({ ssid, signal, frequency })))
+        JSON.stringify(
+            this.networks
+                .pipe(distinct(({ ssid }) => ssid))
+                .map(({ ssid, frequency, signal }) => ({ ssid, signal, frequency }))
+        )
     )
 }
 

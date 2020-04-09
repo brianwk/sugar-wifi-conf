@@ -41,9 +41,9 @@ WifiNetworksCharacteristic.prototype.onReadRequest = function (offset, callback)
 
     this.networks
         .pipe(
+            delay(5000),
             distinct(({ ssid }) => ssid),
             map(({ ssid, frequency, signal }) => ({ ssid, signal, frequency })),
-            delay(5000),
             toArray(),
             first()
         )

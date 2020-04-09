@@ -32,7 +32,10 @@ WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
         .pipe(
             delay(5000),
             distinct(({ ssid }) => ssid),
-            map(({ ssid, signal }) => ({ ssid, signal })),
+            map(({ ssid, signal }) => {
+                console.log('got network', { ssid, signal })
+                return { ssid, signal }
+            }),
             takeUntil(timer(10000))
         )
         .subscribe({ next })
@@ -55,8 +58,7 @@ WifiNetworksCharacteristic.prototype.onNotify = function () {
 }
 
 WifiNetworksCharacteristic.prototype.onUnsubscribe = function () {
-    wlan0.removeListener(wlan0.scan)
-    wlan0.removeListener(this.onNetworkUpdate.bind(this))
+    wlan0.removeAllListeners()
 }
 
 module.exports = WifiNetworksCharacteristic

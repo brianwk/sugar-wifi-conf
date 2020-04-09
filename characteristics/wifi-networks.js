@@ -46,7 +46,7 @@ WifiNetworksCharacteristic.prototype.onSubscribe = function (maxValueSize, updat
     this.updateValueCallback = updateValueCallback
     wlan0.on(
         'update',
-        this.onNetworkUpdate
+        this.onNetworkUpdate.bind(this)
     )
 }
 
@@ -56,7 +56,7 @@ WifiNetworksCharacteristic.prototype.onNotify = function () {
 
 WifiNetworksCharacteristic.prototype.onUnsubscribe = function () {
     wlan0.removeListener(wlan0.scan)
-    wlan0.removeListener(this.onNetworkUpdate)
+    wlan0.removeListener(this.onNetworkUpdate.bind(this))
 }
 
 module.exports = WifiNetworksCharacteristic

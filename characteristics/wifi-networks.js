@@ -19,10 +19,15 @@ util.inherits(WifiNetworksCharacteristic, BlenoCharacteristic)
 
 WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
     const next = function (network) {
-        console.log('next network', network)   
-        const encoded = JSON.stringify(network)
-        const buffer = Buffer.from(encoded, 'ascii')
-        this.updateValueCallback(buffer)
+	const encoded = JSON.stringify(network)
+	try {
+            const buffer = Buffer.from(encoded, 'ascii')
+	} catch (e) {
+            console.log('Invalid buffer', encoded)
+        }
+	for (let i = 0; i < buffer.byteLength; i = i + this.maxValueSize) {
+            this.updateValueCallback(buffer.slice(i, i + this.maxValueSize))
+	}
     }.bind(this)
 
     const networks = Observable.create((observer) => {
@@ -43,8 +48,8 @@ WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
 }
 
 WifiNetworksCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {
+    this.maxValueSize = maxValueSize
     console.log('subscribe to WifiNetworksCharacteristic')
-
     wlan0.on('ready', () => wlan0.scan())
 
     this.updateValueCallback = updateValueCallback

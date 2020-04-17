@@ -35,16 +35,15 @@ JsonObjectCharacteristic.prototype.onObjectUpdate = function () {
             this.updateValueCallback(buffer.slice(i, i + this.maxValueSize))
         }
     }.bind(this)
-}.bind(this)
 
-const objects = Observable.create((observer) => {
-    this.iterateObjects(observer)
-    observer.complete()
-})
+    const objects = Observable.create((observer) => {
+        this.iterateObjects(observer)
+        observer.complete()
+    })
 
-objects
-    .pipe.apply(objects, this.pipeline)
-    .subscribe({ next })
+    objects
+        .pipe.apply(objects, this.pipeline)
+        .subscribe({ next })
 }
 
 JsonObjectCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {

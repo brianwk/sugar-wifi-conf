@@ -1,22 +1,21 @@
 let util = require('util')
-let bleno = require('bleno')
 let UUID = require('../sugar-uuid')
 let wpa = require('wpa_supplicant')
 const wlan0 = wpa('wlan0')
 const { distinct, map } = require('rxjs/operators')
-const { JsonObjectCharacteristic } = require('./json-object')
+const JsonObjectCharacteristic = require('./json-object')
 
 let WifiNetworksCharacteristic = function () {
+    WifiNetworksCharacteristic.super_.call(this, UUID.WIFI_NETWORKS)
     this.pipeline = [
         distinct(({ ssid }) => ssid),
         map(({ ssid, signal }) => {
             return { ssid, signal }
         })
     ]
-    WifiNetworksCharacteristic.super_.call(this, UUID.WIFI_NETWORKS)
 }
 
-util.inherits(WifiNetworksCharacteristic, BlenoCharacteristic)
+util.inherits(WifiNetworksCharacteristic, JsonObjectCharacteristic)
 
 WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
     WifiNetworksCharacteristic.prototype.onSubscribe.super_.apply(this, [maxValueSize, updateValueCallback])

@@ -47,6 +47,7 @@ JsonObjectCharacteristic.prototype.onObjectUpdate = function () {
 }
 
 JsonObjectCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {
+    this.maxValueSize = maxValueSize
     this.updateValueCallback = updateValueCallback
 }
 

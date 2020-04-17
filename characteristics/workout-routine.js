@@ -4,16 +4,18 @@ let UUID = require('../sugar-uuid')
 
 let BlenoCharacteristic = bleno.Characteristic
 
-let WorkoutRoutineCharacteristic = function () {
-    WorkoutRoutineCharacteristic.super_.call(this, {
-        uuid: UUID.WORKOUT_ROUTINE,
+let JsonRpcCharacteristic = function () {
+    JsonRpcCharacteristic.super_.call(this, {
+        uuid: UUID.JSON_RPC,
         properties: ['read', 'write', 'writeWithoutResponse']
     })
+
+    this.response = null
 }
 
-util.inherits(WorkoutRoutineCharacteristic, BlenoCharacteristic)
+util.inherits(JsonRpcCharacteristic, BlenoCharacteristic)
 
-WorkoutRoutineCharacteristic.prototype.onReadRequest = function (offset, callback) {
+JsonRpcCharacteristic.prototype.onReadRequest = function (offset, callback) {
     console.log('workout routine read', offset)
     /**
      * @app.route('/set_workout_routine/<id>')
@@ -24,7 +26,7 @@ WorkoutRoutineCharacteristic.prototype.onReadRequest = function (offset, callbac
     callback(this.RESULT_SUCCESS, data)
 }
 
-WorkoutRoutineCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
+JsonRpcCharacteristic.prototype.onWriteRequest = function (data, offset, withoutResponse, callback) {
     console.log('InputCharacteristic write request: ' + data.toString() + ' ' + offset + ' ' + withoutResponse)
     /**
      * @app.route('/set_workout_routine/<id>')
@@ -34,4 +36,4 @@ WorkoutRoutineCharacteristic.prototype.onWriteRequest = function (data, offset, 
     callback(this.RESULT_SUCCESS)
 }
 
-module.exports = WorkoutRoutineCharacteristic
+module.exports = JsonRpcCharacteristic

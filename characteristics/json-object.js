@@ -15,13 +15,13 @@ let JsonObjectCharacteristic = function (serviceUuid) {
         uuid: serviceUuid,
         properties: ['notify']
     })
-
-    this.emitObject = function (object) {
-        this.observer.next(object)
-    }.bind(this)
 }
 
 util.inherits(JsonObjectCharacteristic, BlenoCharacteristic)
+
+JsonObjectCharacteristic.prototype.emitObject = function (object) {
+    this.observer.next(object)
+}
 
 JsonObjectCharacteristic.prototype.onObjectUpdate = function () {
     const next = function (object) {

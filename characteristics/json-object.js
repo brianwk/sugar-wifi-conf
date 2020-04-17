@@ -26,18 +26,25 @@ util.inherits(JsonObjectCharacteristic, BlenoCharacteristic)
 JsonObjectCharacteristic.prototype.onObjectUpdate = function () {
     const next = function (object) {
         const encoded = JSON.stringify(object)
-        const buffer = Buffer.from(encoded, 'ascii')
-        this.updateValueCallback(buffer)
+        try {
+            const buffer = Buffer.from(encoded, 'ascii')
+        } catch (e) {
+            console.log('Invalid buffer', encoded)
+        }
+        for (let i = 0; i < buffer.byteLength; i = i + this.maxValueSize) {
+            this.updateValueCallback(buffer.slice(i, i + this.maxValueSize))
+        }
     }.bind(this)
+}.bind(this)
 
-    const objects = Observable.create((observer) => {
-        this.iterateObjects(observer)
-        observer.complete()
-    })
+const objects = Observable.create((observer) => {
+    this.iterateObjects(observer)
+    observer.complete()
+})
 
-    objects
-        .pipe.apply(objects, this.pipeline)
-        .subscribe({ next })
+objects
+    .pipe.apply(objects, this.pipeline)
+    .subscribe({ next })
 }
 
 JsonObjectCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {

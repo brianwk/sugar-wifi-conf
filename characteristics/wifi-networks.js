@@ -16,13 +16,9 @@ let WifiNetworksCharacteristic = function () {
     WifiNetworksCharacteristic.super_.call(this, UUID.WIFI_NETWORKS)
 }
 
-util.inherits(WifiNetworksCharacteristic, JsonObjectCharacteristic)
+util.inherits(WifiNetworksCharacteristic, BlenoCharacteristic)
 
-WifiNetworksCharacteristic.prototype.iterateObjects = function (observer) {
-    wlan0.networks.forEach(this.emitObject)
-}
-
-WifiNetworksCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {
+WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
     WifiNetworksCharacteristic.prototype.onSubscribe.super_.apply(this, [maxValueSize, updateValueCallback])
 
     wlan0.on('ready', () => wlan0.scan())

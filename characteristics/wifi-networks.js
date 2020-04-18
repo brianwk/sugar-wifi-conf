@@ -17,8 +17,8 @@ let WifiNetworksCharacteristic = function () {
 
 util.inherits(WifiNetworksCharacteristic, JsonObjectCharacteristic)
 
-WifiNetworksCharacteristic.prototype.onNetworkUpdate = function () {
-    WifiNetworksCharacteristic.prototype.onSubscribe.super_.apply(this, [maxValueSize, updateValueCallback])
+WifiNetworksCharacteristic.prototype.onObjectUpdate = function () {
+    WifiNetworksCharacteristic.prototype.onObjectUpdate.super_.apply(this, [maxValueSize, updateValueCallback])
 
     wlan0.on('ready', () => wlan0.scan())
     wlan0.on(

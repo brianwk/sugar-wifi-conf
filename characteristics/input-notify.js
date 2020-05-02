@@ -3,6 +3,7 @@ let util = require('util')
 let bleno = require('bleno')
 let UUID = require('../sugar-uuid')
 let config = require('../config')
+const { wlan0 } = require('../wlan0')
 const fs = require('fs')
 const path = require('path')
 const conf_path = '/etc/wpa_supplicant/wpa_supplicant.conf'
@@ -170,27 +171,25 @@ async function setWifi (input_ssid, input_password) {
   }
   /** @todo this logic needs to verify connectivity
    */
-  let result = restartWpaSupplicant()
+  let result = configureWifi(input_ssid, input_password)
   if (result.error) {
     fs.renameSync(conf_path + suffix, conf_path)
-    result = restartWpaSupplicant()
   }
-
   setMessage(result.msg)
   /** @todo end block to refactor to use dbus */
 }
 
-function restartWpaSupplicant() {
-  let error = false
-  let msg
-  try {
-    execSync('wpa_cli -i wlan0 reconfigure').toString()
-    msg = 'Success'
-  } catch (e) {
-    error = true
-    msg = 'Error: ' + e.toString()
-  }
-  return { error, msg }
+function configureWifi(ssid, psk) {	
+    var error = false,
+        msg = 'Success'
+    const network = wlan0.networks.find((network) => network.ssid === ssid)
+    if (!network) {
+	error = true
+        msg = "Unknown network ssid: " + ssid
+    }
+    console.log(`connecting to ${ssid} with key ${psk}`)
+    network.connect({ psk })
+    return { error, msg }
 }
 
 function isWlan0Ok() {

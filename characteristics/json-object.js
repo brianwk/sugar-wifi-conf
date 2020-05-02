@@ -9,7 +9,6 @@ let JsonObjectCharacteristic = function (serviceUuid) {
     if (!serviceUuid) {
         throw new Error("You must supply serviceUuid argument as a string to instantiate this Characteristic")
     }
-    console.log('serviceUuid', serviceUuid)
     JsonObjectCharacteristic.super_.call(this, {
         uuid: serviceUuid,
         properties: ['notify']
@@ -19,18 +18,17 @@ let JsonObjectCharacteristic = function (serviceUuid) {
 util.inherits(JsonObjectCharacteristic, BlenoCharacteristic)
 
 JsonObjectCharacteristic.prototype.emitObject = function (object) {
-    this.observer.next(object)
+	this.observer.next(object)
 }
 
 JsonObjectCharacteristic.prototype.onObjectUpdate = function () {
     const next = function (object) {
-        const encoded = JSON.stringify(object)
-        let buffer
-	try {
-            buffer = Buffer.from(encoded, 'ascii')
-        } catch (e) {
-            console.log('Invalid buffer', encoded)
+	if (typeof object != 'object') {
+	    console.log('invalid buffer', object)
+            return
         }
+	const encoded = JSON.stringify(object)
+        const buffer = Buffer.from(encoded, 'ascii')
         for (let i = 0; i < buffer.byteLength; i = i + this.maxValueSize) {
             this.updateValueCallback(buffer.slice(i, i + this.maxValueSize))
         }

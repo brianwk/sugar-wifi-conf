@@ -1,7 +1,7 @@
 let util = require('util')
 let UUID = require('../sugar-uuid')
 let wpa = require('wpa_supplicant')
-const wlan0 = wpa('wlan0')
+const { wlan0 } = require('../wlan0')
 const { distinct, map } = require('rxjs/operators')
 const JsonObjectCharacteristic = require('./json-object')
 
@@ -18,13 +18,15 @@ let WifiNetworksCharacteristic = function () {
 util.inherits(WifiNetworksCharacteristic, JsonObjectCharacteristic)
 
 WifiNetworksCharacteristic.prototype.iterateObjects = function(callback) {
-    return wlan0.networks.forEach(callback.bind(this))
+	return wlan0.networks.forEach(callback.bind(this))
 }
 
 WifiNetworksCharacteristic.prototype.onSubscribe = function (maxValueSize, updateValueCallback) {
+    console.log('New subscriber')
+
     WifiNetworksCharacteristic.super_.prototype.onSubscribe.apply(this, [maxValueSize, updateValueCallback])
 
-    wlan0.on('ready', () => { console.log('scan'); wlan0.scan(); })
+    wlan0.scan()
     wlan0.on(
         'update',
         this.onObjectUpdate.bind(this)
@@ -32,10 +34,13 @@ WifiNetworksCharacteristic.prototype.onSubscribe = function (maxValueSize, updat
 }
 
 WifiNetworksCharacteristic.prototype.onNotify = function () {
-//    wlan0.scan()
+    //if (!wlan0.scanning) {
+	wlan0.scan()
+    //}
 }
 
 WifiNetworksCharacteristic.prototype.onUnsubscribe = function () {
+    console.log('Lost subscriber')
     wlan0.removeAllListeners()
 }
 
